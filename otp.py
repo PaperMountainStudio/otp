@@ -14,9 +14,12 @@ if len(sys.argv) != 2:
     print("usage: otp [name]")
     sys.exit(1)
 
-account=sys.argv[1]
-result = subprocess.Popen(["gpg2", "-d", f'{os.getenv("HOME")}/.otp/{account}.gpg'], stdout=subprocess.PIPE).stdout.read()
-secret = result.decode("utf-8").replace("\n","")
+account = sys.argv[1]
+result = subprocess.Popen(["gpg2", "-d",
+    f'{os.getenv("HOME")}/.otp/{account}.gpg'],
+    stdout=subprocess.PIPE).stdout.read()
+secret = result.decode("utf-8").replace("\n", "")
+
 
 # hotp and totp functions are taken from https://github.com/susam/mintotp
 def hotp(key, counter, digits=6, digest='sha1'):
