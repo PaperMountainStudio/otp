@@ -6,6 +6,7 @@ import time
 import base64
 import struct
 import hmac
+from pathlib import Path
 # idea: ~/.otp/github.gpg stores a OTP secret key for github
 # the file is GPG encypted
 # for example command "otp github" will give you a otp code
@@ -15,8 +16,13 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 account = sys.argv[1]
-result = subprocess.Popen(["gpg2", "-d",
-    f'{os.getenv("HOME")}/.otp/{account}.gpg'],
+
+secretfile = Path(f'{os.getenv("HOME")}/.otp/{account}.gpg')
+if not secretfile.is_file():
+    print("secret not found")
+    sys.exit(1)
+
+result = subprocess.Popen(["gpg2", "-d", secretfile],
     stdout=subprocess.PIPE).stdout.read()
 secret = result.decode("utf-8").replace("\n", "")
 
